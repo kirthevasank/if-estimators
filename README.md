@@ -3,7 +3,7 @@ This is a Matlab Implementation of our Nonparametric Estimators using Influence
 Functions. For more details, read our paper on Arxiv:
 http://arxiv.org/abs/1411.4342
 
-# Functionals \& Features
+### Functionals \& Features
 - Currently, our implementation covers the following functionals,
     Entropies: Shannon Entropy, Conditional Shannon Entropy
     Mutual Informations: Shannon MI, Conditional Shannon MI
