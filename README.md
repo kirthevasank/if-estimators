@@ -14,14 +14,19 @@ http://arxiv.org/abs/1411.4342
 - Since all estimators are nonparametric, they work well only in under 5-7
   dimensions depending on the problem.
 
-## Installation and Getting Started
+### Installation and Getting Started
 - Just add this directory to your Matlab workspace and you are good to go.
 - We have created Unit Tests in the files utX.m, utXY.m, utXgivenY.m,
   utXYgivenZ.m. You can use them as demos to learn how to use this library.
 - For questions/ bug reports please email kandasamy@cs.cmu.edu 
 
-## Citation
+### Citation
 If you use this library in your academic work please cite our paper: "Influence
 Functions for Machine Learning: Nonparametric Estimators for Entropies,
 Divergences and Mutual Informations", Kirthevasan Kandasamy, Akshay
 Krishnamurthy, Barnabas Poczos, Larry Wasserman, James Robins.
+
+### License
+This software is released under the GNU GPL License (version 3). See LICENSE.txt
+for more details.
+
