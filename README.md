@@ -28,7 +28,7 @@ Krishnamurthy, Barnabas Poczos, Larry Wasserman, James Robins.
 
 ### Matlab ITE Toolbox
 Our estimators are to be made available as part of the Matlab's ITE toolbox
-(http://www.gatsby.ucl.ac.uk/~szabo/software.html).
+(https://bitbucket.org/szzoli/ite/).
 
 ### License
 This software is released under the GNU GPL License (version 3). See LICENSE.txt
