@@ -1,7 +1,7 @@
-function [estim, asympAnalysis, bw] =shannonEntropy(X, functionalParams, params)
+function [estim, asympAnalysis, bw] = shannonEntropy(X, functionalParams, params)
 % This estimates the shannon entropy -\int plog(p)
   params = parseOneDistroParams(params, X);
-  [estim, asympAnalysis, bw] = getOneDistroInfFunAvgs(X, @entropyInfFun, ...
+  [estim, asympAnalysis, bw] = getInfFunAvgs(X, @entropyInfFun, ...
     @entropyAsympVar, params);
 end
 

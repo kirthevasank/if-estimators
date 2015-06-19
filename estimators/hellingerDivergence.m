@@ -5,11 +5,16 @@ function [estim, asympAnalysis, bwX, bwY] = hellingerDivergence(X, Y, ...
   if isempty(functionalParams), functionalParams = struct;
   end
   functionalParams.alpha = 0.5;
+  params = parseTwoDistroParams(params, X, Y);
 
   [estim1, asymp1, bwX, bwY] = fAlphaGBeta(X, Y, functionalParams, params);
   estim = 1 - estim1;
-  asympAnalysis = asymp1;
-  asympAnalysis.confInterval(1) = 1 - asymp1.confInterval(2);
-  asympAnalysis.confInterval(2) = 1 - asymp1.confInterval(1);
+  if params.doAsympAnalysis
+    asympAnalysis = asymp1;
+    asympAnalysis.confInterval(1) = 1 - asymp1.confInterval(2);
+    asympAnalysis.confInterval(2) = 1 - asymp1.confInterval(1);
+  else
+    asympAnalysis = [];
+  end
 
 end

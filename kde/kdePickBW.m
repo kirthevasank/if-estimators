@@ -20,14 +20,8 @@ function [optBW, kdeFuncH] = kdePickBW(X, smoothness, params, bwLogBounds)
   end
   
   % Set default parameter values
-  if ~exist('smoothness', 'var')
-    smoothness = 'gauss';
-  end
   if ~exist('params', 'var')
     params = struct;
-  end
-  if ~isfield(params, 'kdePickMethod')
-    params.kdePickMethod = 'cv';
   end
   if ~isfield(params, 'numPartsKFCV')
     params.numPartsKFCV = 5;
@@ -42,23 +36,20 @@ function [optBW, kdeFuncH] = kdePickBW(X, smoothness, params, bwLogBounds)
     if isfield(params, 'bwLogBounds')
       bwLogBounds = params.bwLogBounds;
     else
-      bwLogBounds = log( [1e-4 10] * stdX );
+      bwLogBounds = log( [1e-2 10] * stdX );
       bwLogBounds(2) = min(bwLogBounds(2), 1);
     end
   end
-  if ~isfield(params, 'estLowerBound')
-    params.estLowerBound = 0;
-  end
-  if ~isfield(params, 'estUpperBound')
-    params.estUpperBound = Inf;
-  end
 
-  % K-Fold CV 
-  if strcmp(params.kdePickMethod, 'silverman')
-    dimStds = std(X)';
-    optBW = 1.06 * dimStds * numData^(-1/5);
-
-  elseif strcmp(params.kdePickMethod, 'cv')
+  if USE_DIRECT
+  % Use DiRect to Optimize over h
+    diRectBounds = bwLogBounds;
+    options.maxevals = params.numCandidates;
+    kFoldFunc = @(t) kdeKFoldCV(t, X, smoothness, params);
+    [~, maxPt, history] = diRectWrap(kFoldFunc, diRectBounds, options);
+    optBW = exp(maxPt);
+  else
+  % Use just ordinary KFold CV
     bwCandidates = linspace(bwLogBounds(1), bwLogBounds(2), ...
       params.numCandidates);
     bestLogLikl = -inf;
@@ -74,35 +65,21 @@ function [optBW, kdeFuncH] = kdePickBW(X, smoothness, params, bwLogBounds)
   % Return a function handle
   if params.getKdeFuncH
     kdeFuncH = kdeGivenBW(X, optBW, smoothness, params);
-    kdeFuncH = @(pts) truncatedKDE(pts, kdeFuncH, params.estLowerBound, ...
-                                   params.estUpperBound);
   else
     kdeFuncH = [];
   end
 
 end
 
-
-function ests = truncatedKDE(pts, kdeFuncH, estLowerBound, estUpperBound)
-  ests = kdeFuncH(pts);
-  ests = max(ests, estLowerBound);
-  ests = min(ests, estUpperBound);
-end
-
-
-% This function does the actual K-Fold Cross Validation
 function avgLogLikl = kdeKFoldCV(logBW, X, smoothness, params) 
-
 
   h = exp(logBW);
   numPartsKFCV = params.numPartsKFCV;
-  numCVEpochs = 1;
-%   numCVEpochs = numPartsKFCV;
-  logLikls = zeros(numCVEpochs, 1);
+  logLikls = zeros(numPartsKFCV, 1);
   numData = size(X, 1);
   numDims = size(X, 2);
 
-  for kFoldIter = 1:numCVEpochs
+  for kFoldIter = 1:numPartsKFCV
     % Set the partition up
     testStartIdx = round( (kFoldIter-1)*numData/numPartsKFCV + 1 );
     testEndIdx = round( kFoldIter*numData/numPartsKFCV );
@@ -124,12 +101,14 @@ function avgLogLikl = kdeKFoldCV(logBW, X, smoothness, params)
       logPte = logPte(~isInfLogPte);
       logLikls(kFoldIter) = mean(logPte);
     else
+%       fprintf('%d/%d  =%0.4f, points had -inf loglikl. Quitting\n', ...
+%         sum(isInfLogPte), numTestData, sum(isInfLogPte)/numTestData);
       logLikls(kFoldIter) = -inf; 
       break;
     end
   end
 
   avgLogLikl = mean(logLikls);
+%   fprintf('bw=%f, log-likl=%f\n', h, avgLogLikl);
 
 end
-

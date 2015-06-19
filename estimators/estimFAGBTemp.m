@@ -5,3 +5,4 @@ function tempEstim= estimFAGBTemp(densXatX, densXatY, densYatX, densYatY, alpha)
   tempEstim = alpha * mean( (densYatX ./ densXatX).^beta ) + ...
               beta * mean( (densXatY ./ densYatY).^alpha );
 end
+

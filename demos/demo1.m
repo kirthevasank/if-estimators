@@ -1,17 +1,27 @@
-function utX
+function demo1
 % Unit tests for all one distro functionals
 
   close all;
   clear all;
+  clc;
+
+  fprintf('\nSome demos on estimating functionals of a single distribution.\n');
 
   functionals = {'shannonEntropy'};
   tests = {'1D-Uniform', '1D-Conv', '2D-Conv', '2D-Gaussian'};
+
+  % This is for storing parameters specific to the functional (E.g. alpha for the
+  % alpha-divergences.) We will not use this here.
   functionalParams = struct;
+
+  % params is for storing the various parameters for estimation. For the most part,
+  % we recommend using the default parameters (see estimators/parseCommonParams.m).
   params = struct;
+  % If you also need to obtain asymptotic confidence sets set doAsympAnalysis to true
+  % (set to false by default) and set the alpha level (i.e. alpha = 0.05 for a 
+  % 95% confidence set).
   params.alpha = 0.05;
   params.doAsympAnalysis = true;
-  params.kdePickMethod = 'silverman';
-  params.kdePickMethod = 'cv';
 
   % Test 1
   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -19,13 +29,11 @@ function utX
 
     % First generate the data
     if testIdx == 1
-      params.doBoundaryCorrection = true;
       N = 1000;
       X = rand(N, 1);
       trueVals = [0];
 
     elseif testIdx == 2
-      params.doBoundaryCorrection = true;
       N = 1000;
       gamma = 10;
       Z = rand(N, 1+gamma); B = double(rand(N, 1) < 0.5);
@@ -41,7 +49,6 @@ function utX
       trueVals(1) = trueEntropy;
 
     elseif testIdx == 3
-      params.doBoundaryCorrection = true;
       N = 1000;
       gamma = 10;
       Z = rand(N, 1+gamma); B = double(rand(N, 1) < 0.5);
@@ -52,7 +59,6 @@ function utX
       % same as for testIdx = 2
 
     elseif testIdx == 4
-      params.doBoundaryCorrection = false;
       d = 5;
       N = 10000;
       X = randn(N, d);
@@ -71,7 +77,7 @@ end
 
 function doTests(X, functionals, trueVals, test, params, functionalParams)
 
-  fprintf('%s\n====================================================\n\n', test);
+  fprintf('\n%s\n====================================================\n', test);
 
   for k = 1:numel(functionals)
 
@@ -79,29 +85,14 @@ function doTests(X, functionals, trueVals, test, params, functionalParams)
     trueVal = trueVals(k);
     fprintf('  %s: Truth: %0.5f\n', functional, trueVal);
 
-    % First Do a Data split version
-%     params.dataSplit = true;
     if strcmp(functional, 'shannonEntropy')
       [estDS, asympAnalysis] = shannonEntropy(X, functionalParams, params);
     end
     % Now compute the errors
     errDS = abs(trueVal - estDS);
-    fprintf('    EstimDS : %.4f,  ErrDS : %.4f, CI: %s\n', ...
+    fprintf('    Estimate : %.4f,  Error : %.4f, CI: %s\n', ...
       estDS, errDS, mat2str(asympAnalysis.confInterval));
 
-%     % Now do a non-Data split version
-%     params.dataSplit = false;
-%     [estNDS, asympAnylsis] = estimateOneDistroFunctionals...
-%       (X, functional, functionalParams, params);
-%     % Now compute the errors
-%     errNDS = abs(trueVal - estNDS);
-%     if trueVal ~= 0
-%       errNDS = errNDS/trueVal;
-%     end
-%     fprintf('    EstimNDS : %.4f,  ErrDS : %.4f, CI: %s\n', ...
-%       estNDS, errNDS, mat2str(asympAnylsis.confInterval));
-% 
-%     fprintf('\n');
   end
 
 end

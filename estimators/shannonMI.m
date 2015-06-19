@@ -14,12 +14,8 @@ function [estim, asympAnalysis, bwX, bwY, bwXY] = shannonMI(X, Y, ...
   % Asymptotic Variance
   if params.doAsympAnalysis
     n = size(X, 1);
-    asympAnalysis.asympVar = asympXY.asympVar + asympX.asympVar + ...
-                               asympY.asympVar;
-    asympAnalysis.asympStd = sqrt(asympAnalysis.asympVar);
-    width = norminv(1-params.alpha/2) * asympAnalysis.asympStd / sqrt(n);
-    asympAnalysis.confInterval(1) = estim - width;
-    asympAnalysis.confInterval(2) = estim + width;
+    asympVar = asympXY.asympVar + asympX.asympVar + asympY.asympVar;
+    asympAnalysis = getAsympAnalysis(estim, asympVar, params.alpha, n);
   end
 
 end

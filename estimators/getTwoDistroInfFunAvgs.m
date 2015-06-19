@@ -2,17 +2,19 @@ function [avg, asympAnalysis, bwX, bwY] = getTwoDistroInfFunAvgs(X, Y, ...
   infFunX, infFunY, asympVarFun, params)
 % This function will sum the influence functions over the partitions
 
-  numPartitions = params.numPartitions;
-  infFunXPartTerms = zeros(numPartitions, 1);
-  infFunYPartTerms = zeros(numPartitions, 1);
-  asympVarXPartTerms = zeros(numPartitions, 1);
-  asympVarYPartTerms = zeros(numPartitions, 1);
-  partWeightsX = zeros(numPartitions, 1);
-  partWeightsY = zeros(numPartitions, 1);
   n = size(X, 1);
   m = size(Y, 1);
+  numPartitions = params.numPartitions;
+  numAvgPartitions = params.numAvgPartitions;
 
-  for k = 1:numPartitions
+  infFunXPartTerms = zeros(numAvgPartitions, 1);
+  infFunYPartTerms = zeros(numAvgPartitions, 1);
+  asympVarXPartTerms = zeros(numAvgPartitions, 1);
+  asympVarYPartTerms = zeros(numAvgPartitions, 1);
+  partWeightsX = zeros(numAvgPartitions, 1);
+  partWeightsY = zeros(numAvgPartitions, 1);
+
+  for k = 1:numAvgPartitions
 
     [Xden, Xest] = getDenEstSamples(X, numPartitions, k);
     [Yden, Yest] = getDenEstSamples(Y, numPartitions, k);
@@ -34,7 +36,6 @@ function [avg, asympAnalysis, bwX, bwY] = getTwoDistroInfFunAvgs(X, Y, ...
       end
 
     % Obtain the KDE at
-%     size(Xden), size(Xest), size(Yden), size(Yest),
     densEstX = kdeGivenBW(Xden, bwX, params.smoothness, params);
     densEstY = kdeGivenBW(Yden, bwY, params.smoothness, params);
     densXatX = densEstX(Xest);
@@ -45,11 +46,11 @@ function [avg, asympAnalysis, bwX, bwY] = getTwoDistroInfFunAvgs(X, Y, ...
     % Now obtain the sum of influence functions
     infFunXPartTerms(k) = sum( infFunX(densXatX, densYatX) );
     infFunYPartTerms(k) = sum( infFunY(densXatY, densYatY) );
+    partWeightsX(k) = size(Xest, 1);
+    partWeightsY(k) = size(Yest, 1);
 
     % If doing asymptotic analysis
     if params.doAsympAnalysis
-      partWeightsX(k) = size(Xest, 1);
-      partWeightsY(k) = size(Yest, 1);
       [aX, aY] = asympVarFun(densXatX, densXatY, densYatX, densYatY);
       asympVarXPartTerms(k) = aX;
       asympVarYPartTerms(k) = aY;
@@ -58,7 +59,8 @@ function [avg, asympAnalysis, bwX, bwY] = getTwoDistroInfFunAvgs(X, Y, ...
   end
 
   % Now return the average as the influence function
-  avg = sum(infFunXPartTerms)/n + sum(infFunYPartTerms)/m;
+  avg = sum(infFunXPartTerms)/sum(partWeightsX) + ...
+        sum(infFunYPartTerms)/sum(partWeightsY);
 
   if params.doAsympAnalysis
     asympVarX = (partWeightsX' * asympVarXPartTerms)/n;
@@ -67,6 +69,11 @@ function [avg, asympAnalysis, bwX, bwY] = getTwoDistroInfFunAvgs(X, Y, ...
     asympStd = sqrt(asympVar);
     asympAnalysis.asympVar = asympVar;
     asympAnalysis.asympStd = asympStd;
+    if asympVarX < 0 | asympVarY < 0,
+      fprintf(['The estimated asymptotic variance is negative. This is', ...
+        ' probably because the asymptotic distribution is degenerate and ', ...
+         'non-gaussian.\n']);
+    end
 
     % Now construct the confidence interval
     if isfield(params, 'alpha')

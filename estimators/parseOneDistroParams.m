@@ -3,8 +3,8 @@ function params = parseOneDistroParams(params, X)
 % params is a struct with some parameters for the estimation. 
 % (viz. whether to data split or not)
 
-  numDims = size(X, 2);
-  params = parseCommonParams(params, numDims);
+  [n, numDims] = size(X);
+  params = parseCommonParams(params, numDims, n);
 
 end
 

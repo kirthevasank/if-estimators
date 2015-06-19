@@ -1,19 +1,26 @@
-function utXgivenY
+function demo3
 % Unit tests for functionals on X, Y where they come from a joint distribution
 % X, Y
 
   close all;
   clear all;
 
+  fprintf('\nSome demos on conditional functionals of one distribution.\n'); 
   functionals = {'shannonMI', 'condShannonEntropy'};
   tests = {'1D-UnifUnif', 'Indep-Gaussians', 'Gaussian'};
+
+  % This is for storing parameters specific to the functional (E.g. alpha for the
+  % alpha-divergences.) We will not use it here.
   functionalParams = struct;
-  functionalParams.alpha = 0.8; % for the Alpha divergences
+
+  % params is for storing the various parameters for estimation. For the most part,
+  % we recommend using the default parameters (see estimators/parseCommonParams.m).
   params = struct;
+  % If you also need to obtain asymptotic confidence sets set doAsympAnalysis to true
+  % (set to false by default) and set the alpha level (i.e. alpha = 0.05 for a 
+  % 95% confidence set).
   params.alpha = 0.05;
   params.doAsympAnalysis = true;
-  params.kdePickMethod = 'silverman';
-%   params.kdePickMethod = 'cv';
 
   % Test 1
   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -21,15 +28,12 @@ function utXgivenY
 
     % First generate the data
     if testIdx == 1
-      params.doBoundaryCorrection = true;
-      params.doAsympAnalysis = true;
       N = 2000; 
       X = rand(N, 1);
       Y = rand(N, 1);
       trueVals = zeros(2, 1);
 
     elseif testIdx == 2
-      params.doBoundaryCorrection = false;
       d1 = 1; d2 = 3;
       N = 4000; 
       [C1, L1] = getRandomCovar(d1);
@@ -40,7 +44,6 @@ function utXgivenY
       trueVals(2) = -d1/2 * (1 + log(2*pi)) - 0.5*log(det(C1));
 
     elseif testIdx == 3
-      params.doBoundaryCorrection = false;
       d1 = 1; d2 = 3; d = d1+d2;
       N = 4000; 
       [C, L] = getRandomCovar(d);
@@ -87,7 +90,6 @@ function doTests(X, Y, functionals, trueVals, test, params, functionalParams)
     errDS = abs(trueVal - estDS);
     fprintf('    EstimDS : %.4f,  ErrDS : %.4f, CI: %s\n\n', ...
       estDS, errDS, mat2str(asympAnalysis.confInterval));
-%     asympAnalysis,
 
   end
 

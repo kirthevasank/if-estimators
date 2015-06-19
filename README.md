@@ -11,14 +11,17 @@ http://arxiv.org/abs/1411.4342
       Conditional KL, Conditional Tsallis
 - In addition to the estimators, we also produce asymptotic confidence intervals
   for the estimators.
-- Since all estimators are nonparametric, they work well only in under 5-7
+- Since all estimators are nonparametric, they work well only in under 4-6 
   dimensions depending on the problem.
 
 ### Installation and Getting Started
-- Just add this directory to your Matlab workspace and you are good to go.
-- We have created Unit Tests in the files utX.m, utXY.m, utXgivenY.m,
-  utXYgivenZ.m. You can use them as demos to learn how to use this library.
-- For questions/ bug reports please email kandasamy@cs.cmu.edu 
+- Run ifSetup.m with the path to the installation as the argument. This adds all
+  subdirectories to the matlab workspace and you are good to go.
+- To get started, see the demos directory. demos.m illustrates a very simple use
+  case.
+- demo1.m ... demo4.m illustrate all functionals in different settings. We re
+- See parseCommonParams for setting of hyperparameters. We recommend using the
+  default settings unless you are very familiar with the paper.
 
 ### Citation
 If you use this library in your academic work please cite our paper: "Influence
@@ -26,11 +29,24 @@ Functions for Machine Learning: Nonparametric Estimators for Entropies,
 Divergences and Mutual Informations", Kirthevasan Kandasamy, Akshay
 Krishnamurthy, Barnabas Poczos, Larry Wasserman, James Robins.
 
-### Matlab ITE Toolbox
-Our estimators are to be made available as part of the Matlab's ITE toolbox
-(https://bitbucket.org/szzoli/ite/).
-
 ### License
-This software is released under the GNU GPL License (version 3). See LICENSE.txt
-for more details.
+This software is released under GNU GPL v3(>=) License. Please read LICENSE.txt for
+more information.
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+"Copyright 2015 Kirthevasan Kandasamy"
+
+
+
+- For questions/ bug reports please email kandasamy@cs.cmu.edu
+
 

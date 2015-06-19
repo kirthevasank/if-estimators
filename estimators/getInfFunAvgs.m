@@ -1,12 +1,14 @@
-function [avg, asympAnalysis, bw] = getOneDistroInfFunAvgs(...
-  X, infFun, asympVarFun, params)
+function [avg, asympAnalysis, bw] = getInfFunAvgs(X, infFun, asympVarFun,params)
 % This function will sum the influence functions over the partitions.
 
-  numPartitions = params.numPartitions;
-  infFunPartTerms = zeros(numPartitions, 1);
-  asympVarPartTerms = zeros(numPartitions, 1);
-  partWeights = zeros(numPartitions, 1);
   n = size(X, 1);
+  numPartitions = params.numPartitions;
+  numAvgPartitions = params.numAvgPartitions;
+
+  % Now determine the number of partitions to average over.
+  infFunPartTerms = zeros(numAvgPartitions, 1);
+  asympVarPartTerms = zeros(numAvgPartitions, 1);
+  partWeights = zeros(numAvgPartitions, 1);
 
   for k = 1:numPartitions
 
@@ -27,23 +29,28 @@ function [avg, asympAnalysis, bw] = getOneDistroInfFunAvgs(...
 
     % Now obtain the sum of influence function values for Xest
     infFunPartTerms(k) = sum( infFun(densX) );
+    partWeights(k) = size(Xest, 1);
 
     % If doing asymptotic analysis
     if params.doAsympAnalysis
       asympVarPartTerms(k) = asympVarFun(densX);
-      partWeights(k) = size(Xest, 1);
     end
 
   end
 
   % Now return the average
-  avg = sum(infFunPartTerms)/n;
+  avg = sum(infFunPartTerms)/sum(partWeights);
 
   if params.doAsympAnalysis
     asympVar = (partWeights' * asympVarPartTerms)/n;
     asympStd = sqrt(asympVar);
     asympAnalysis.asympVar = asympVar;
     asympAnalysis.asympStd = asympStd;
+    if asympVar < 0
+      fprintf(['The estimated asymptotic variance is negative. This is', ...
+        ' probably because the asymptotic distribution is degenerate and ', ...
+         'non-gaussian.\n']);
+    end
 
     % Now construct a confidence interval
     if isfield(params, 'alpha')

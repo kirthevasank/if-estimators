@@ -1,20 +1,28 @@
-function utXY
+function demo2
 % Unit tests for all one distro functionals
 
   close all;
   clear all;
+  clc;
+
+  fprintf('\nSome demos on estimating functionals of two distribution.\n');
 
   functionals = {'hellingerDiv', 'tsallisDiv', 'chiSqDiv', 'renyiDiv', 'klDiv'};
   tests = {'1D-UnifUnif', '1D-UnifConv', 'Gaussian'};
+
+  % This is for storing parameters specific to the functional (E.g. alpha for the
+  % alpha-divergences.) 
   functionalParams = struct;
   functionalParams.alpha = 0.8; % for the Alpha divergences
+
+  % params is for storing the various parameters for estimation. For the most part,
+  % we recommend using the default parameters (see estimators/parseCommonParams.m).
   params = struct;
+  % If you also need to obtain asymptotic confidence sets set doAsympAnalysis to true
+  % (set to false by default) and set the alpha level (i.e. alpha = 0.05 for a 
+  % 95% confidence set).
   params.alpha = 0.05;
   params.doAsympAnalysis = true;
-  params.doBoundaryCorrection = true;
-  params.estLowerBound = 1e-5;
-  params.kdePickMethod = 'silverman';
-  params.kdePickMethod = 'cv';
 
   % Test 1
   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -22,13 +30,11 @@ function utXY
 
     % First generate the data
     if testIdx == 1
-      params.doAsympAnalysis = true;
       N1 = 1000; X = rand(N1, 1);
       N2 = 1200; Y = rand(N2, 1);
       trueVals = zeros(5, 1);
 
     elseif testIdx == 2
-      params.doAsympAnalysis = true;
       N1 = 1000; X = rand(N1, 1);
       N2 = 1000;
       gamma = 10;
@@ -48,7 +54,6 @@ function utXY
       trueVals(5) = 0.290857;
 
     elseif testIdx == 3
-      params.doBoundaryCorrection = false;
       d = 5;
       N1 = 4000; N2 = N1;
       X = randn(N1, d);
@@ -77,9 +82,13 @@ function doTests(X, Y, functionals, trueVals, test, params, functionalParams)
 
     functional = functionals{k};
     trueVal = trueVals(k);
-    fprintf('  %s: Truth: %0.5f\n', functional, trueVal);
+    if isnan(trueVal), trueValStr = 'unknown';
+    else trueValStr = sprintf('%.5f', trueVal);
+    end
+    fprintf('  %s: Truth: %s\n', functional, trueValStr);
 
     switch functional
+
       case 'hellingerDiv'
         [estDS, asympAnalysis] = hellingerDivergence(X, Y, functionalParams, ...
           params);
@@ -104,21 +113,10 @@ function doTests(X, Y, functionals, trueVals, test, params, functionalParams)
 
     % Now compute the errors
     errDS = abs(trueVal - estDS);
-    fprintf('    EstimDS : %.4f,  ErrDS : %.4f, CI: %s\n\n', ...
+    fprintf('    Estimate : %.4f, Error %.4f, CI: %s\n\n', ...
       estDS, errDS, mat2str(asympAnalysis.confInterval));
-%     asympAnalysis,
 
   end
 
 end
-
-
-% function printResults(trueVal, estDS, asympAnalysis)
-% 
-%   errDS = abs(trueVal - estDS);
-%   fprintf('    EstimDS : %.4f,  ErrDS : %.4f, CI: %s\n\n', ...
-%     estDS, errDS, mat2str(asympAnalysis.confInterval));
-%   asympAnalysis,
-% 
-% end
 

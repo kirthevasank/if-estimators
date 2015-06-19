@@ -4,8 +4,7 @@ function kde = kdeGivenBW(X, h, smoothness, params)
 % Inputs
 %   X: the nxd data matrix
 %   h: bandwidth
-%   smoothness: If using a Gaussian Kernel this should be 'gaussian'. Otherwise
-%    specify the order of the legendre polynomial kernel. 
+%   smoothness: smoothness of the density. (Default value = 2)
 % Outputs
 %   kde: a function handle to estimate the density. kde takes in N points in a
 %     Nxd matrix and outputs an Nx1 vector.
@@ -14,18 +13,11 @@ function kde = kdeGivenBW(X, h, smoothness, params)
   numDims = size(X, 2);
   numPts = size(X, 1);
 
-  % Fix the bandwidth
-  if size(h, 1) == 1, h = h'; % if you get a row vector
-  end
-  if isscalar(h)
-    h = h * ones(numDims, 1);
-  end;
-
   if ~exist('params', 'var')
     params = struct;
   end
   if ~isfield(params, 'doBoundaryCorrection')
-    params.doBoundaryCorrection = false;
+    params.doBoundaryCorrection = true;
   end
   if ~isfield(params, 'estLowerBound')
     params.estLowerBound = 0;
@@ -56,10 +48,10 @@ function kde = kdeGivenBW(X, h, smoothness, params)
       for d = 1:numDims
         if dimRegions(d) == '0'
           replicX(:,d) = -replicX(:,d);
-          toReplicate = toReplicate .* double( X(:,d) < h(d) );
+          toReplicate = toReplicate .* double( X(:,d) < h );
         elseif dimRegions(d) == '2'
           replicX(:,d) = 2 - replicX(:,d);
-          toReplicate = toReplicate .* double( 1 - X(:,d) < h(d) ); 
+          toReplicate = toReplicate .* double( 1 - X(:,d) < h ); 
         end
       end
       replicatedPts = replicX( logical(toReplicate), :);
@@ -91,19 +83,18 @@ function ests = kdeIterative(pts, augX, h, smoothness, params, numX)
   while cumNumPts < numPts
     currNumPts = min(ptsPerPartition, numPts - cumNumPts);
     if isstr(smoothness) & strcmp(lower(smoothness(1:5)), 'gauss')
-      K = kdeGaussKernel(pts(cumNumPts+1: cumNumPts+currNumPts, :), ...
-        augX, h);
+      K = kdeGaussKernel(pts(cumNumPts+1: cumNumPts+currNumPts, :), augX, h);
     else
       K = kdeLegendreKernel( pts(cumNumPts+1: cumNumPts+currNumPts, :), ...
-        augX, h, smoothness);
+            augX, h, smoothness);
     end
-    ests(cumNumPts+1 : cumNumPts + currNumPts) = sum(K, 2)/numX;
+    ests(cumNumPts+1 : cumNumPts + currNumPts) = sum(K,2)/numX;
     cumNumPts = cumNumPts + currNumPts;
   end
 
-%   % Now truncate those values below and above the bounds
-%   ests = max(ests, params.estLowerBound);
-%   ests = min(ests, params.estUpperBound);
+  % Now truncate those values below and above the bounds
+  ests = max(ests, params.estLowerBound);
+  ests = min(ests, params.estUpperBound);
 end
 
 
