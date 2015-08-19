@@ -30,7 +30,7 @@ function params = parseCommonParams(params, numDims, n)
   end
 
   % Number of partitions to average over
-  if ~isfield(params, 'numAvgPartitions') 
+  if ~isfield(params, 'numAvgPartitions')
     if isfield(params, 'averageAll') & (~params.averageAll)
       params.numAvgPartitions = 1;
     else
@@ -40,6 +40,7 @@ function params = parseCommonParams(params, numDims, n)
 
   % Some parameters for Kernel Density estimation
   if ~isfield(params, 'doBoundaryCorrection')
+%       params.doBoundaryCorrection = false;
     if numDims <= 3
       params.doBoundaryCorrection = true;
     else
