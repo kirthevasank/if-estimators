@@ -4,7 +4,8 @@ function kde = kdeGivenBW(X, h, smoothness, params)
 % Inputs
 %   X: the nxd data matrix
 %   h: bandwidth
-%   smoothness: smoothness of the density. (Default value = 2)
+%   smoothness: If using a Gaussian Kernel this should be 'gaussian'. Otherwise
+%    specify the order of the legendre polynomial kernel. 
 % Outputs
 %   kde: a function handle to estimate the density. kde takes in N points in a
 %     Nxd matrix and outputs an Nx1 vector.
@@ -96,20 +97,4 @@ function ests = kdeIterative(pts, augX, h, smoothness, params, numX)
   ests = max(ests, params.estLowerBound);
   ests = min(ests, params.estUpperBound);
 end
-
-
-%   % Debug
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%   % Plot the replicated points
-%   if numDims == 1
-%     plot(X, rand(numPts,1), 'b.'); hold on,
-%     plot(augX, rand(numAugPts,1), 'r.');
-%   elseif numDims == 2
-%     plot(augX(:,1), augX(:,2), 'r.'); hold on,
-%     plot(X(:,1), X(:,2), 'b.');
-%   elseif numDims == 3
-%     plot3(augX(:,1), augX(:,2), augX(:,3), 'r.'); hold on,
-%     plot3(X(:,1), X(:,2), X(:,3), 'b.');
-%   end
-%   pause;
 

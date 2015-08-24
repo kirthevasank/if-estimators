@@ -3,6 +3,6 @@ function ifSetup(path)
     fprintf('Path not given. Using current working directory.\n');
     path = pwd;
   end
-  addpath(genpath('./'));
+  addpath(genpath(path));
 end
 

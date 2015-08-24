@@ -96,7 +96,7 @@ function avgLogLikl = kdeKFoldCV(logBW, X, smoothness, params)
     Pte = kdeTr(Xte);
     logPte = log(Pte);
     isInfLogPte = isinf(logPte);
-    % If fewer than 5% are infinities, then remove them
+    % If fewer than 10% are infinities, then remove them
     if sum(isInfLogPte) < 0.1*numTestData
       logPte = logPte(~isInfLogPte);
       logLikls(kFoldIter) = mean(logPte);
@@ -109,6 +109,5 @@ function avgLogLikl = kdeKFoldCV(logBW, X, smoothness, params)
   end
 
   avgLogLikl = mean(logLikls);
-%   fprintf('bw=%f, log-likl=%f\n', h, avgLogLikl);
 
 end

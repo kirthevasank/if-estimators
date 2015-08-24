@@ -8,7 +8,7 @@ function demo1
   fprintf('\nSome demos on estimating functionals of a single distribution.\n');
 
   functionals = {'shannonEntropy'};
-  tests = {'1D-Uniform', '1D-Conv', '2D-Conv', '2D-Gaussian'};
+  tests = {'1D-Uniform', '1D-Conv', '2D-Gaussian'};
 
   % This is for storing parameters specific to the functional (E.g. alpha for the
   % alpha-divergences.) We will not use this here.
@@ -49,16 +49,6 @@ function demo1
       trueVals(1) = trueEntropy;
 
     elseif testIdx == 3
-      N = 1000;
-      gamma = 10;
-      Z = rand(N, 1+gamma); B = double(rand(N, 1) < 0.5);
-      Y = B.* Z(:,1) + (1-B).*max(Z(:,2:end), [], 2);
-      X = [Y rand(N, 1)];
-      params.estLowerBound = 0.4;
-      % Since the 2nd dimension is the uniform density, the trueVals will be the
-      % same as for testIdx = 2
-
-    elseif testIdx == 4
       d = 5;
       N = 10000;
       X = randn(N, d);
