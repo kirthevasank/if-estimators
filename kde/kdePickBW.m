@@ -1,11 +1,12 @@
 function [optBW, kdeFuncH] = kdePickBW(X, smoothness, params, bwLogBounds)
 % This picks a bandwidth for the KDE. We use k-fold cross validation in the
-% range specified by bwLogBounds. The optimization is done via DiRect.
+% range specified by bwLogBounds.
 % If params.getKdeFuncH is True, then it also returns a function handle for the
 % kde with the optimal bandiwidth.
 
   % prelims
   numData = size(X, 1);
+  numDims = size(X, 2);
   USE_DIRECT = false;
 
   % Shuffle the data
@@ -53,6 +54,7 @@ function [optBW, kdeFuncH] = kdePickBW(X, smoothness, params, bwLogBounds)
     bwCandidates = linspace(bwLogBounds(1), bwLogBounds(2), ...
       params.numCandidates);
     bestLogLikl = -inf;
+    optBW = 0.2 * numData ^(-4/(4+numDims));
     for candIter = 1:params.numCandidates
       currLogLikl = kdeKFoldCV(bwCandidates(candIter), X, smoothness, params);
       if currLogLikl > bestLogLikl
