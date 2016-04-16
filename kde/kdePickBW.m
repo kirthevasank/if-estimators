@@ -73,6 +73,7 @@ function [optBW, kdeFuncH] = kdePickBW(X, smoothness, params, bwLogBounds)
 
 end
 
+
 function avgLogLikl = kdeKFoldCV(logBW, X, smoothness, params) 
 
   h = exp(logBW);
@@ -113,3 +114,4 @@ function avgLogLikl = kdeKFoldCV(logBW, X, smoothness, params)
   avgLogLikl = mean(logLikls);
 
 end
+

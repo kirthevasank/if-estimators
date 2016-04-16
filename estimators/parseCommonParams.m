@@ -15,12 +15,6 @@ function params = parseCommonParams(params, numDims, n)
   % The smoothness of the function for the KDE
   if ~isfield(params, 'smoothness')
       params.smoothness = 'gauss';
-%     if numDims <= 3
-% %       params.smoothness = 2;
-%       params.smoothness = 'gauss';
-%     else
-%       params.smoothness = 'gauss';
-%     end
   end
 
   % Number of partitions to split the data into
@@ -43,11 +37,6 @@ function params = parseCommonParams(params, numDims, n)
   % Some parameters for Kernel Density estimation
   if ~isfield(params, 'doBoundaryCorrection')
       params.doBoundaryCorrection = false;
-%     if numDims <= 3
-%       params.doBoundaryCorrection = true;
-%     else
-%       params.doBoundaryCorrection = false;
-%     end
   end
 
   if ~isfield(params, 'estLowerBound')

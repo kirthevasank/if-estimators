@@ -13,11 +13,13 @@ function [estim, asympAnalysis, bwXZ, bwYZ, bwXYZ, bwZ] = ...
   estim = hXZ + hYZ - hXYZ - hZ;
 
   % Asymptotic Variance
-  if params.doAsympAnalysis
+  if ~isempty(asympXYZ)
     n = size(X, 1);
     asympVar = asympXZ.asympVar + asympYZ.asympVar + ...
       asympXYZ.asympVar + asympZ.asympVar;
     asympAnalysis = getAsympAnalysis(estim, asympVar, params.alpha, n);
+  else
+    asympAnalysis = [];
   end
 
 end

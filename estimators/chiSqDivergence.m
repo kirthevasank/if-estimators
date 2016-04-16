@@ -9,9 +9,12 @@ function [estim, asympAnalysis, bwX, bwY] = chiSqDivergence(X, Y, ...
 
   [estim1, asymp1, bwX, bwY] = fAlphaGBeta(X, Y, functionalParams, params);
   estim = estim1 - 1;
-  asympAnalysis = asymp1;
-  asympAnalysis.confInterval(1) = asympAnalysis.confInterval(1) - 1;
-  asympAnalysis.confInterval(2) = asympAnalysis.confInterval(2) - 1;
+  if ~isempty(asymp1)
+    asympAnalysis.confInterval(1) = asympAnalysis.confInterval(1) - 1;
+    asympAnalysis.confInterval(2) = asympAnalysis.confInterval(2) - 1;
+  else
+    asympAnalysis = [];
+  end
 
 end
 

@@ -9,10 +9,12 @@ function [estim, asympAnalysis, bwXY, bwY] = condShannonEntropy(X, Y, ...
   estim = hY - hXY;
 
   % Asymptotic Variance
-  if params.doAsympAnalysis
+  if ~isempty(asympXY) 
     n = size(X, 1);
     asympVar = asympXY.asympVar + asympY.asympVar;
     asympAnalysis = getAsympAnalysis(estim, asympVar, params.alpha, n);
+  else
+    asympAnalysis = [];
   end
 
 end

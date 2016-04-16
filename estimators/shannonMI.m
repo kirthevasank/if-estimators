@@ -9,13 +9,15 @@ function [estim, asympAnalysis, bwX, bwY, bwXY] = shannonMI(X, Y, ...
   [hY, asympY, bwY] = shannonEntropy(Y, functionalParams, params);
 
   % The Estimator
-  estim = hX + hY - hXY;
+  estim = max(hX + hY - hXY, 0);
 
   % Asymptotic Variance
-  if params.doAsympAnalysis
+  if ~isempty(asympX) 
     n = size(X, 1);
     asympVar = asympXY.asympVar + asympX.asympVar + asympY.asympVar;
     asympAnalysis = getAsympAnalysis(estim, asympVar, params.alpha, n);
+  else
+    asympAnalysis = [];
   end
 
 end

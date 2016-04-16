@@ -6,7 +6,7 @@ function [estim, asympAnalysis, bwX, bwY] = tsallisDivergence(X, Y, ...
   [estim1, asymp1, bwX, bwY] = fAlphaGBeta(X, Y, functionalParams, params);
   estim = 1/(functionalParams.alpha-1) * (estim1 - 1); 
 
-  if params.doAsympAnalysis
+  if ~isempty(asymp1)
     % Now modify the terms in the asymptotic analysis
     N = size(X, 1) + size(Y, 1);
     asympAnalysis.asympVar = asymp1.asympVar / (functionalParams.alpha-1)^2;
