@@ -46,7 +46,7 @@ more information.
 "Copyright 2015 Kirthevasan Kandasamy"
 
 
-## Acknowledgements
+#### Acknowledgements
 We thank Zoltán Szabó from UCL for pointing out some bugs in a previous version of
 this software.
 
