@@ -49,8 +49,11 @@ more information.
 #### Acknowledgements
 We thank Zoltán Szabó from UCL for pointing out some bugs in a previous version of
 this software.
+* Some of the above estimators also appear in the ITE toolbox: 
+https://bitbucket.org/szzoli/ite/
 
 
-- For questions/ bug reports please email kandasamy@cs.cmu.edu
+
+For questions/ bug reports please email kandasamy@cs.cmu.edu
 
 
